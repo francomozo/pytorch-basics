@@ -18,11 +18,11 @@ from model import Discriminator, Generator, initialize_weights
 
 # Hyperparameters
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-LEARNING_RATE = 2e-4  # could also use two lrs, one for gen and one for disc
-BATCH_SIZE = 128
+LEARNING_RATE = 3e-4  # could also use two lrs, one for gen and one for disc
+BATCH_SIZE = 512
 IMAGE_SIZE = 64
 CHANNELS_IMG = 1
-NOISE_DIM = 100
+NOISE_DIM = 32
 NUM_EPOCHS = 10
 # next is 64 for both to match what they did in the paper
 FEATURES_DISC = 64
@@ -43,7 +43,10 @@ dataset_path = '/'.join(os.getcwd().split('/')[:-1]) + '/dataset/' # uglycode
 # If you train on MNIST, remember to set channels_img to 1
 dataset = datasets.MNIST(root=dataset_path, train=True, transform=transforms,
                        download=True)
+dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
+print(len(dataloader))
 dataloader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True)
+print(len(dataloader))
 
 gen = Generator(NOISE_DIM, CHANNELS_IMG, FEATURES_GEN).to(device)
 disc = Discriminator(CHANNELS_IMG, FEATURES_DISC).to(device)
@@ -92,7 +95,7 @@ for epoch in range(NUM_EPOCHS):
         if batch_idx % 100 == 0:
             print(
                 f"Epoch [{epoch}/{NUM_EPOCHS}] Batch {batch_idx}/{len(dataloader)} \
-                  Loss D: {loss_disc:.4f}, loss G: {loss_gen:.4f}"
+                  Loss D: {loss_disc:.6f}, loss G: {loss_gen:.6f}"
             )
 
             with torch.no_grad():
