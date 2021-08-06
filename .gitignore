@@ -1,3 +1,7 @@
 FCNN-Pytorch/dataset/*
 CONVN-Pytorch/dataset/*
 CONVN-Pytorch/runs/*
+FCNN-Pytorch/dataset/*
+GAN-Pytorch/dataset/*
+GAN-Pytorch/SimpleGAN/runs/*
+GAN-Pytorch/DeepConvGAN/runs/*
