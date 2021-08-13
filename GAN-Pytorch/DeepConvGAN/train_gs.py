@@ -47,7 +47,6 @@ writer_fake = SummaryWriter(f"runs_gs2/fake")
 step = 0
 
 
-
 lrs = [3e-3]
 bsizes = [1024]
 noise_dims = [128]

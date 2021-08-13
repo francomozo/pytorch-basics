@@ -36,7 +36,7 @@ class Generator(nn.Module):
         self.gen = nn.Sequential(
             nn.Linear(z_dim, 256),
             nn.LeakyReLU(0.01),
-            nn.Linear(256, img_dim),
+        nn.Linear(256, img_dim),
             nn.Tanh(),  # normalize inputs to [-1, 1] so make outputs [-1, 1]
         )
 
@@ -50,7 +50,7 @@ lr = 3e-4 # Andrej Karpathy's tweet
 z_dim = 64 # can try 128, 256, etc
 image_dim = 28 * 28 * 1  # 784
 batch_size = 32
-num_epochs = 50
+num_epochs = 500
 
 # Initializations
 disc = Discriminator(image_dim).to(device)
@@ -73,12 +73,15 @@ criterion = nn.BCELoss() # implements the form of the GANs loss. The game is to 
                          # nn.BCELoss has a minus "-" at the beggining, so it is the same as minimizing
                          # -"the loss functions"
 
-writer_fake = SummaryWriter(f"runs/fake")
-writer_real = SummaryWriter(f"runs/real")
+writer_fake = SummaryWriter(f"runs/500epochs/fake")
+writer_real = SummaryWriter(f"runs/500epochs/real")
 step = 0
 
 
 for epoch in range(num_epochs):
+    disc_epoch_loss = []
+    gen_epoch_loss = []
+
     for batch_idx, (real, _) in enumerate(loader):
         real = real.view(-1, 784).to(device)        
         
@@ -97,6 +100,7 @@ for epoch in range(num_epochs):
         #       in lossD_fake we want the second ((1 - y_n * log(1 - x_n))), so this explains
         #       the why in torch.ones_like and torch.zeros_like
         lossD = (lossD_real + lossD_fake) / 2
+        disc_epoch_loss.append(lossD.item())
         disc.zero_grad()
         lossD.backward(retain_graph=True) # retain_graph=True because I want to reuse fake=gen(noise)
                                           # in the next section
@@ -107,15 +111,18 @@ for epoch in range(num_epochs):
         # saturating gradients
         output = disc(fake).view(-1)
         lossG = criterion(output, torch.ones_like(output))
+        gen_epoch_loss.append(lossG.item())
         gen.zero_grad()
         lossG.backward()
         opt_gen.step()
 
         # Tensorboard code
         if batch_idx == 0:
+            disc_loss = sum(disc_epoch_loss)/len(disc_epoch_loss)
+            gen_loss = sum(gen_epoch_loss)/len(gen_epoch_loss)
             print(
                 f"Epoch [{epoch}/{num_epochs}] Batch {batch_idx}/{len(loader)} \
-                      Loss D: {lossD:.4f}, loss G: {lossG:.4f}"
+                      Loss D: {disc_loss:.4f}, loss G: {gen_loss:.4f}"
             )
 
             with torch.no_grad():

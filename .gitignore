@@ -5,6 +5,5 @@ FCNN-Pytorch/dataset/*
 GAN-Pytorch/dataset/*
 GAN-Pytorch/SimpleGAN/runs/*
 GAN-Pytorch/DeepConvGAN/runs/*
-GAN-Pytorch/DeepConvGAN/runs_gs1/*
-GAN-Pytorch/DeepConvGAN/runs_gs2/*
-
+GAN-Pytorch/WGAN/runs/*
+GAN-Pytorch/WGAN-GP/runs/*
